@@ -1,8 +1,6 @@
 package sample;
 
 import javafx.application.Application;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Worker;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -48,27 +46,20 @@ public class Browser extends Application {
         searchBar.setOnAction(event ->
                 webEngine.load(searchBar.getText()));
 
-        webEngine.locationProperty().addListener(new ChangeListener<String>() {
-            public void changed(ObservableValue<? extends String> ov, final String oldvalue, final String newvalue) {
-                searchBar.setText(newvalue);
-            }
-        });
+        webEngine.locationProperty().addListener((ov, oldvalue, newvalue) -> searchBar.setText(newvalue));
         back.setOnAction(event ->
                 history.go(-1));
         forward.setOnAction(event ->
                 history.go(1));
-        webEngine.getLoadWorker().stateProperty().addListener(new ChangeListener<Worker.State>() {
-            @Override
-            public void changed(ObservableValue<? extends Worker.State> observableValue, Worker.State state, Worker.State t1) {
-                if (t1 == Worker.State.RUNNING) {
-                    statusLabel.setText("Статус: загрузка");
-                }
-                if (t1 == Worker.State.FAILED) {
-                    statusLabel.setText("Статус: ошибка");
-                }
-                if (t1 == Worker.State.SUCCEEDED) {
-                    statusLabel.setText("Статус: Загрузка завершена");
-                }
+        webEngine.getLoadWorker().stateProperty().addListener((observableValue, state, t1) -> {
+            if (t1 == Worker.State.RUNNING) {
+                statusLabel.setText("Статус: загрузка");
+            }
+            if (t1 == Worker.State.FAILED) {
+                statusLabel.setText("Статус: ошибка");
+            }
+            if (t1 == Worker.State.SUCCEEDED) {
+                statusLabel.setText("Статус: Загрузка завершена");
             }
         });
 
